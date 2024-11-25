@@ -4,7 +4,7 @@ module.exports = {
     slowMo: 50,
     defaultViewport: null,
     args: ['--disable-features=site-per-process'],
-    executablePath: '/usr/bin/google-chrome-stable',
+    executablePath: '/usr/bin/chromium-browser',
   },
   baseUrl: 'http://localhost:3000/#'
 }
