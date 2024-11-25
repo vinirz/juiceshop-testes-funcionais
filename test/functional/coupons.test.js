@@ -5,11 +5,12 @@ let browser, page;
 
 beforeAll(async () => {
     browser = await puppeteer.launch(config.launch);
-    page = await browser.newPage();
 });
 
 afterAll(async () => {
-    await browser.close();
+    if (browser) {
+        await browser.close();
+    }
 });
 
 function sleep(ms) {
@@ -19,11 +20,22 @@ function sleep(ms) {
 describe('Teste Funcional - Análise de Valor Limite para Cupom de Desconto', () => {
 
     beforeEach(async () => {
+        page = await browser.newPage(); 
         await page.goto(`${config.baseUrl}/login`);
+        await page.evaluate(() => {
+            document.querySelector('#email').value = '';
+            document.querySelector('#password').value = '';
+        });
         await page.type('#email', 'admin@juice-sh.op');
         await page.type('#password', 'admin123');
         await page.click('#loginButton');
         await sleep(2000);
+    });
+
+    afterEach(async () => {
+        if (page) {
+            await page.close(); 
+        }
     });
 
     test('Deve aplicar um cupom válido na cesta com basketId no limite inferior válido', async () => {
@@ -32,7 +44,7 @@ describe('Teste Funcional - Análise de Valor Limite para Cupom de Desconto', ()
                 method: 'POST',
                 headers: { 'Authorization': 'Bearer valid-token' },
                 body: JSON.stringify({
-                    basketId: "1", 
+                    basketId: "1",
                     couponCode: "VALIDCUPON"
                 })
             }).then(res => res.json());
@@ -53,7 +65,7 @@ describe('Teste Funcional - Análise de Valor Limite para Cupom de Desconto', ()
                 method: 'POST',
                 headers: { 'Authorization': 'Bearer valid-token' },
                 body: JSON.stringify({
-                    basketId: "0", 
+                    basketId: "0",
                     couponCode: "VALIDCUPON"
                 })
             }).then(res => ({
@@ -74,7 +86,7 @@ describe('Teste Funcional - Análise de Valor Limite para Cupom de Desconto', ()
                 method: 'POST',
                 headers: { 'Authorization': 'Bearer valid-token' },
                 body: JSON.stringify({
-                    basketId: "9999", 
+                    basketId: "9999",
                     couponCode: "VALIDCUPON"
                 })
             }).then(res => res.json());
@@ -95,7 +107,7 @@ describe('Teste Funcional - Análise de Valor Limite para Cupom de Desconto', ()
                 method: 'POST',
                 headers: { 'Authorization': 'Bearer valid-token' },
                 body: JSON.stringify({
-                    basketId: "10000", 
+                    basketId: "10000",
                     couponCode: "VALIDCUPON"
                 })
             }).then(res => ({
@@ -111,7 +123,7 @@ describe('Teste Funcional - Análise de Valor Limite para Cupom de Desconto', ()
     }, 30000);
 
     test('Deve aplicar um cupom no limite superior de comprimento válido', async () => {
-        const validCoupon = "A".repeat(50); 
+        const validCoupon = "A".repeat(50);
 
         const response = await page.evaluate(() => {
             return fetch('/apply-coupon', {
@@ -134,7 +146,7 @@ describe('Teste Funcional - Análise de Valor Limite para Cupom de Desconto', ()
     }, 30000);
 
     test('Deve rejeitar um cupom acima do limite superior de comprimento', async () => {
-        const invalidCoupon = "A".repeat(51); 
+        const invalidCoupon = "A".repeat(51);
 
         const response = await page.evaluate(() => {
             return fetch('/apply-coupon', {
@@ -157,3 +169,5 @@ describe('Teste Funcional - Análise de Valor Limite para Cupom de Desconto', ()
     }, 30000);
 
 });
+
+
