@@ -118,6 +118,15 @@ describe('Teste Funcional - Informações do Usuário Autenticado', () => {
             logMessage('Teste "Deve bloquear acesso com token muito curto" passou com sucesso.');
         });
 
+        // Teste para token vazio (0 caracteres)
+        it('Deve bloquear acesso com token vazio', () => {
+            const emptyToken = ''; // 0 caracteres
+            const response = authenticateUser (emptyToken);
+            logMessage(`Resposta para token vazio: ${JSON.stringify(response)}`);
+            expect(response).toEqual({ error: 'Token inválido' });
+            logMessage('Teste "Deve bloquear acesso com token vazio" passou com sucesso.');
+        });
+
         // Teste para token válido (20 a 500 caracteres)
         it('Deve permitir acesso com token válido', () => {
             const response = authenticateUser (validToken); // Usando validToken
