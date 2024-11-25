@@ -62,7 +62,7 @@ describe('Teste Funcional - Informações do Usuário Autenticado', () => {
         expect(errorMessage).toContain('Blocked illegal activity by ::1');
     }, 30000);
 
-    // Testes de Valor Limite --> Intervalo: [0, 500]
+    // Testes de Valor Limite --> Intervalo: [1, 500]
 
     describe('Teste de Validação de Token a Partir da Análise do Valor Limite', () => {
 
@@ -98,7 +98,7 @@ describe('Teste Funcional - Informações do Usuário Autenticado', () => {
             }
         };
 
-        // Exemplo de como criar um token válido
+        // Criação de um token válido
         const validToken = jwt.sign({ user: 'usuario-simulado' }, SECRET_KEY, { expiresIn: '1h' });
 
         // Teste direto da verificação do token
